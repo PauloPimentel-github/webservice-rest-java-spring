@@ -2,6 +2,7 @@ package com.devpimentel.restapi.restapi.resource;
 
 import com.devpimentel.restapi.restapi.event.CreateResourceEvent;
 import com.devpimentel.restapi.restapi.model.Launch;
+import com.devpimentel.restapi.restapi.model.Person;
 import com.devpimentel.restapi.restapi.repository.LaunchRepository;
 import com.devpimentel.restapi.restapi.repository.filter.LaunchFilter;
 import com.devpimentel.restapi.restapi.repository.projection.ReleaseSummary;
@@ -76,6 +77,17 @@ public class LaunchResource {
     	launchRespository.delete(id);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO')")
+    public ResponseEntity<Launch> updateLaunch(@PathVariable Long id, @Valid @RequestBody Launch launch) {
+        try {
+            Launch launchSaved = launchService.updateLaunch(id, launch);
+            return ResponseEntity.ok(launchSaved);
+        } catch (IllegalArgumentException e) {
+            return  ResponseEntity.notFound().build();
+        }
+    }
+
     @ExceptionHandler({ PersonNotExistOrInactiveException.class })
     public ResponseEntity<Object> handlePersonNotExistOrInactiveException(PersonNotExistOrInactiveException ex) {
         String messageUser = messageSource.getMessage("pessoa.inexistente-ou-inativa", null, LocaleContextHolder.getLocale());
@@ -83,4 +95,5 @@ public class LaunchResource {
         List<com.devpimentel.restapi.restapi.exceptionhandler.ExceptionHandler.Error> errors = Arrays.asList(new com.devpimentel.restapi.restapi.exceptionhandler.ExceptionHandler.Error(messageUser, messageDev));
         return ResponseEntity.badRequest().body(errors);
     }
+
 }
