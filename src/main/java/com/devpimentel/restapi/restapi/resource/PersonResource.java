@@ -6,6 +6,8 @@ import com.devpimentel.restapi.restapi.repository.PersonRepository;
 import com.devpimentel.restapi.restapi.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -63,5 +65,11 @@ public class PersonResource {
     @PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA') and #oauth2.hasScope('write')")
     public void updatePropertyActive(@PathVariable Long id, @RequestBody Boolean active) {
         personService.updatePropertyActive(id, active);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
+    public Page<Person> searchPerson(@RequestParam(required = false, defaultValue = "%") String name, Pageable pageable) {
+        return personRepository.findByNameContaining(name, pageable);
     }
 }
