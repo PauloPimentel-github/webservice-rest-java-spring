@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class RestApiProperty {
 
 
-    private String allowedOrigin = "http://localhost:8000";
+    private String allowedOrigin = "http://localhost:4200";
 
     private final Security security = new Security();
 
